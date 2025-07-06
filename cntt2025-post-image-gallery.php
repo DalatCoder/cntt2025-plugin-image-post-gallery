@@ -2,7 +2,21 @@
 /**
  * Plugin Name: CNTT2025 Post Image Gallery
  * Plugin URI: https://dlu.edu.vn
- * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery vào nội dung với Tailwind CSS styling.
+ * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery và                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="gallery_layout_style"><strong>Kiểu hiển thị:</strong></label>
+                    <select name="gallery_layout_style" id="gallery_layout_style" style="width: 100%;">
+                        <option value="masonry" <?php selected($layout_style, 'masonry'); ?>>Pinterest-style (Masonry)</option>
+                        <option value="grid" <?php selected($layout_style, 'grid'); ?>>Grid đều nhau</option>
+                    </select>
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">💡 Masonry: Chiều cao linh hoạt theo tỉ lệ ảnh. Grid: Chiều cao đồng đều.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="event_date"><strong>Ngày diễn ra sự kiện:</strong></label> dung với Tailwind CSS styling.
  * Version: 1.0.0
  * Author: NGUYỄN TRỌNG HIẾU
  * Author URI: https://nguyentronghieu.io.vn
@@ -187,6 +201,7 @@ class CNTT2025_PostImageGallery {
         $gap = get_post_meta($post->ID, '_cntt2025_img_gallery_gap', true) ?: '4';
         $border_radius = get_post_meta($post->ID, '_cntt2025_img_gallery_border_radius', true) ?: 'rounded-lg';
         $preview_quality = get_post_meta($post->ID, '_cntt2025_img_gallery_preview_quality', true) ?: 'medium';
+        $layout_style = get_post_meta($post->ID, '_cntt2025_img_gallery_layout_style', true) ?: 'masonry';
         $event_date = get_post_meta($post->ID, '_cntt2025_img_gallery_event_date', true);
         $event_location = get_post_meta($post->ID, '_cntt2025_img_gallery_event_location', true);
         ?>
@@ -269,7 +284,8 @@ class CNTT2025_PostImageGallery {
                 • <code>columns="4"</code> - Số cột hiển thị<br>
                 • <code>gap="2"</code> - Khoảng cách ảnh<br>
                 • <code>border_radius="rounded"</code> - Bo góc ảnh<br>
-                • <code>preview_quality="medium"</code> - Chất lượng ảnh preview
+                • <code>preview_quality="medium"</code> - Chất lượng ảnh preview<br>
+                • <code>layout_style="masonry"</code> - Kiểu hiển thị (masonry/grid)
             </p>
         </div>
         <?php
@@ -323,6 +339,10 @@ class CNTT2025_PostImageGallery {
             update_post_meta($post_id, '_cntt2025_img_gallery_preview_quality', sanitize_text_field($_POST['gallery_preview_quality']));
         }
 
+        if (isset($_POST['gallery_layout_style'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_layout_style', sanitize_text_field($_POST['gallery_layout_style']));
+        }
+
         // Save event information
         if (isset($_POST['event_date'])) {
             update_post_meta($post_id, '_cntt2025_img_gallery_event_date', sanitize_text_field($_POST['event_date']));
@@ -355,6 +375,7 @@ class CNTT2025_PostImageGallery {
             'gap' => '',
             'border_radius' => '',
             'preview_quality' => '',
+            'layout_style' => '',
             'show_event_info' => 'false'
         ), $atts);
 
@@ -377,23 +398,47 @@ class CNTT2025_PostImageGallery {
         $gap = !empty($atts['gap']) ? $atts['gap'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_gap', true) ?: '4');
         $border_radius = !empty($atts['border_radius']) ? $atts['border_radius'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_border_radius', true) ?: 'rounded-lg');
         $preview_quality = !empty($atts['preview_quality']) ? $atts['preview_quality'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_preview_quality', true) ?: 'medium');
+        $layout_style = !empty($atts['layout_style']) ? $atts['layout_style'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_layout_style', true) ?: 'masonry');
         
         // Get event information
         $event_date = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_date', true);
         $event_location = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_location', true);
         $show_event_info = $atts['show_event_info'] === 'true';
 
-        $column_classes = array(
-            '1' => 'grid-cols-1',
-            '2' => 'grid-cols-1 sm:grid-cols-2',
-            '3' => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-            '4' => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
-            '5' => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5',
-            '6' => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'
-        );
-
-        $gap_class = 'gap-' . $gap;
-        $column_class = $column_classes[$columns] ?? $column_classes['3'];
+        // Determine layout classes based on style
+        if ($layout_style === 'grid') {
+            // Traditional grid layout
+            $column_classes = array(
+                '1' => 'grid grid-cols-1',
+                '2' => 'grid grid-cols-1 sm:grid-cols-2',
+                '3' => 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+                '4' => 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+                '5' => 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5',
+                '6' => 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'
+            );
+            $gap_class = 'gap-' . $gap;
+            $column_class = $column_classes[$columns] ?? $column_classes['3'];
+            $container_class = 'cntt2025-grid-container';
+            $item_class = 'cntt2025-grid-item';
+            $image_class = 'cntt2025-grid-image w-full h-64 object-cover';
+            $caption_class = 'mt-2 text-sm text-gray-600 text-center';
+        } else {
+            // Masonry layout (default)
+            $column_classes = array(
+                '1' => 'cntt2025-masonry-columns-1',
+                '2' => 'cntt2025-masonry-columns-2',
+                '3' => 'cntt2025-masonry-columns-3',
+                '4' => 'cntt2025-masonry-columns-4',
+                '5' => 'cntt2025-masonry-columns-5',
+                '6' => 'cntt2025-masonry-columns-6'
+            );
+            $gap_class = 'cntt2025-masonry-gap-' . $gap;
+            $column_class = $column_classes[$columns] ?? $column_classes['3'];
+            $container_class = 'cntt2025-masonry-grid';
+            $item_class = 'cntt2025-masonry-item';
+            $image_class = 'cntt2025-masonry-image';
+            $caption_class = 'cntt2025-image-caption';
+        }
 
         ob_start();
         ?>
@@ -418,28 +463,38 @@ class CNTT2025_PostImageGallery {
                 </div>
             <?php endif; ?>
             
-            <div class="grid <?php echo esc_attr($column_class); ?> <?php echo esc_attr($gap_class); ?>">
+            <div class="<?php echo esc_attr($container_class); ?> <?php echo esc_attr($column_class); ?> <?php echo esc_attr($gap_class); ?>" data-columns="<?php echo esc_attr($columns); ?>" data-gap="<?php echo esc_attr($gap); ?>" data-layout="<?php echo esc_attr($layout_style); ?>">
                 <?php foreach ($gallery_images as $index => $image): ?>
                     <?php 
                     // Get preview image URL based on quality setting
                     $preview_url = $image['thumbnail']; // default fallback
+                    $image_width = 0;
+                    $image_height = 0;
+                    
                     if (!empty($image['id'])) {
                         $preview_image = wp_get_attachment_image_src($image['id'], $preview_quality);
                         if ($preview_image) {
                             $preview_url = $preview_image[0];
+                            $image_width = $preview_image[1];
+                            $image_height = $preview_image[2];
                         }
                     }
                     ?>
-                    <div class="cntt2025-gallery-item <?php echo esc_attr($border_radius); ?> cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden" 
+                    <div class="<?php echo esc_attr($item_class); ?> <?php echo esc_attr($border_radius); ?> cursor-pointer" 
                          data-image-url="<?php echo esc_url($image['url']); ?>"
                          data-image-caption="<?php echo esc_attr($image['caption']); ?>"
-                         data-image-index="<?php echo $index; ?>">
+                         data-image-index="<?php echo $index; ?>"
+                         data-width="<?php echo $image_width; ?>"
+                         data-height="<?php echo $image_height; ?>">
                         <img src="<?php echo esc_url($preview_url); ?>" 
                              alt="<?php echo esc_attr($image['caption']); ?>"
-                             class="w-full h-auto object-cover <?php echo esc_attr($border_radius); ?> shadow-md hover:shadow-lg transition-shadow duration-300"
-                             loading="lazy">
+                             class="<?php echo esc_attr($image_class); ?> <?php echo esc_attr($border_radius); ?>"
+                             loading="lazy"
+                             <?php if ($layout_style === 'masonry'): ?>
+                             onload="CNTTMasonry.imageLoaded(this)"
+                             <?php endif; ?>>
                         <?php if (!empty($image['caption'])): ?>
-                            <div class="mt-2 text-sm text-gray-600 text-center">
+                            <div class="<?php echo esc_attr($caption_class); ?>">
                                 <?php echo esc_html($image['caption']); ?>
                             </div>
                         <?php endif; ?>

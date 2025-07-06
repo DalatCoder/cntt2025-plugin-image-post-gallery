@@ -2,29 +2,56 @@ jQuery(document).ready(function ($) {
   let currentGalleryImages = [];
   let currentImageIndex = 0;
 
-  // Handle gallery item clicks
-  $(document).on("click", ".cntt2025-gallery-item", function (e) {
-    e.preventDefault();
+  // Masonry initialization and management
+  const CNTTMasonry = {
+    grids: [],
 
-    const galleryContainer = $(this).closest(".cntt2025-gallery-container");
-    const galleryItems = galleryContainer.find(".cntt2025-gallery-item");
-
-    // Build array of images in this gallery
-    currentGalleryImages = [];
-    galleryItems.each(function (index) {
-      currentGalleryImages.push({
-        url: $(this).data("image-url"),
-        caption: $(this).data("image-caption") || "",
-        index: index,
+    init: function () {
+      $(".cntt2025-masonry-grid").each(function () {
+        this.masonryInstance = this;
+        CNTTMasonry.grids.push(this);
       });
-    });
+    },
 
-    // Get clicked image index
-    currentImageIndex = $(this).data("image-index");
+    imageLoaded: function (img) {
+      // Optional: Trigger layout update if needed
+      // This can be used for more complex masonry layouts
+      $(img).closest(".cntt2025-masonry-item").addClass("loaded");
+    },
+  };
 
-    // Show modal with clicked image
-    showModal(currentImageIndex);
-  });
+  // Initialize masonry on page load
+  CNTTMasonry.init();
+
+  // Handle gallery item clicks - updated for both masonry and grid items
+  $(document).on(
+    "click",
+    ".cntt2025-masonry-item, .cntt2025-grid-item",
+    function (e) {
+      e.preventDefault();
+
+      const galleryContainer = $(this).closest(".cntt2025-gallery-container");
+      const galleryItems = galleryContainer.find(
+        ".cntt2025-masonry-item, .cntt2025-grid-item"
+      );
+
+      // Build array of images in this gallery
+      currentGalleryImages = [];
+      galleryItems.each(function (index) {
+        currentGalleryImages.push({
+          url: $(this).data("image-url"),
+          caption: $(this).data("image-caption") || "",
+          index: index,
+        });
+      });
+
+      // Get clicked image index
+      currentImageIndex = $(this).data("image-index");
+
+      // Show modal with clicked image
+      showModal(currentImageIndex);
+    }
+  );
 
   // Show modal function
   function showModal(imageIndex) {
@@ -195,4 +222,7 @@ jQuery(document).ready(function ($) {
       preloadAdjacentImages();
     }
   });
+
+  // Make CNTTMasonry available globally
+  window.CNTTMasonry = CNTTMasonry;
 });
