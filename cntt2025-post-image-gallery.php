@@ -2,17 +2,18 @@
 /**
  * Plugin Name: CNTT2025 Post Image Gallery
  * Plugin URI: https://dlu.edu.vn
- * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery vào nội dung.
+ * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery vào nội dung với Tailwind CSS styling.
  * Version: 1.0.0
  * Author: NGUYỄN TRỌNG HIẾU
  * Author URI: https://nguyentronghieu.io.vn
- * Text Domain: cntt2025-gallery
+ * Text Domain: cntt2025-post-image-gallery
  * Domain Path: /languages
  * Requires at least: 5.0
- * Tested up to: 6.0
+ * Tested up to: 6.4
  * Requires PHP: 7.4
  * Network: false
  * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if (!defined('ABSPATH')) exit;
@@ -34,114 +35,9 @@ class CNTT2025_PostImageGallery {
         add_filter('manage_cntt2025_img_gallery_posts_columns', array($this, 'set_custom_columns'));
         add_action('manage_cntt2025_img_gallery_posts_custom_column', array($this, 'custom_column_content'), 10, 2);
         
-        // Add debug menu
-        add_action('admin_menu', array($this, 'add_debug_menu'));
-        add_action('admin_notices', array($this, 'debug_notice'));
-        
-        // Add test menu to verify admin_menu hook works
-        add_action('admin_menu', array($this, 'add_test_menu'), 999);
-        
-        // Check post type registration after init
-        add_action('init', array($this, 'check_post_type_registration'), 999);
-        
         // Activation hook
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-    }
-    
-    public function debug_notice() {
-        $screen = get_current_screen();
-        if ($screen && $screen->base === 'plugins') {
-            echo '<div class="notice notice-success is-dismissible">';
-            echo '<p><strong>CNTT2025 Post Image Gallery:</strong> Plugin đã được load! Kiểm tra menu <strong>"Image Galleries"</strong> trong admin.</p>';
-            echo '</div>';
-        }
-    }
-
-    public function add_debug_menu() {
-        add_submenu_page(
-            'tools.php',
-            'Gallery Debug',
-            'Gallery Debug',
-            'manage_options',
-            'gallery-debug',
-            array($this, 'debug_page')
-        );
-        
-        // If post type doesn't create menu automatically, create it manually
-        if (post_type_exists('cntt2025_img_gallery')) {
-            $post_type_object = get_post_type_object('cntt2025_img_gallery');
-            if (!$post_type_object->show_in_menu) {
-                add_menu_page(
-                    'Image Galleries',
-                    'Image Galleries',
-                    'edit_posts',
-                    'edit.php?post_type=cntt2025_img_gallery',
-                    '',
-                    'dashicons-images-alt2',
-                    27
-                );
-            }
-        }
-    }
-    
-    public function debug_page() {
-        $post_types = get_post_types(array('public' => true), 'objects');
-        $our_post_type = get_post_type_object('cntt2025_img_gallery');
-        
-        echo '<div class="wrap">';
-        echo '<h1>Gallery Debug Information</h1>';
-        
-        echo '<h2>Post Type Registration Status</h2>';
-        echo '<p><strong>Post Type:</strong> cntt2025_img_gallery</p>';
-        echo '<p><strong>Registered:</strong> ' . (post_type_exists('cntt2025_img_gallery') ? 'Yes' : 'No') . '</p>';
-        
-        if ($our_post_type) {
-            echo '<h3>Post Type Details</h3>';
-            echo '<p><strong>Menu Name:</strong> ' . $our_post_type->labels->menu_name . '</p>';
-            echo '<p><strong>Menu Position:</strong> ' . $our_post_type->menu_position . '</p>';
-            echo '<p><strong>Show in Menu:</strong> ' . ($our_post_type->show_in_menu ? 'Yes' : 'No') . '</p>';
-            echo '<p><strong>Show UI:</strong> ' . ($our_post_type->show_ui ? 'Yes' : 'No') . '</p>';
-            echo '<p><strong>Menu Icon:</strong> ' . $our_post_type->menu_icon . '</p>';
-            echo '<details><summary>Full Details</summary><pre>' . print_r($our_post_type, true) . '</pre></details>';
-        }
-        
-        echo '<h2>All Registered Post Types</h2>';
-        echo '<ul>';
-        foreach ($post_types as $post_type) {
-            echo '<li><strong>' . $post_type->name . '</strong> - ' . $post_type->labels->name . ' (Menu: ' . ($post_type->show_in_menu ? 'Yes' : 'No') . ', Position: ' . $post_type->menu_position . ')</li>';
-        }
-        echo '</ul>';
-        
-        echo '<h2>Current User Capabilities</h2>';
-        $current_user = wp_get_current_user();
-        echo '<p><strong>User:</strong> ' . $current_user->display_name . '</p>';
-        echo '<p><strong>Can edit posts:</strong> ' . (current_user_can('edit_posts') ? 'Yes' : 'No') . '</p>';
-        echo '<p><strong>Can publish posts:</strong> ' . (current_user_can('publish_posts') ? 'Yes' : 'No') . '</p>';
-        echo '<p><strong>Can manage options:</strong> ' . (current_user_can('manage_options') ? 'Yes' : 'No') . '</p>';
-        
-        echo '<h2>Active Plugins</h2>';
-        $active_plugins = get_option('active_plugins');
-        echo '<ul>';
-        foreach ($active_plugins as $plugin) {
-            if (strpos($plugin, 'cntt2025') !== false) {
-                echo '<li><strong>' . $plugin . '</strong></li>';
-            } else {
-                echo '<li>' . $plugin . '</li>';
-            }
-        }
-        echo '</ul>';
-        
-        echo '<h2>Manual Registration Test</h2>';
-        echo '<p><a href="' . admin_url('tools.php?page=gallery-debug&action=test_register') . '" class="button">Test Register Post Type</a></p>';
-        
-        if (isset($_GET['action']) && $_GET['action'] === 'test_register') {
-            echo '<div class="notice notice-info"><p>Testing post type registration...</p></div>';
-            $this->register_post_type();
-            echo '<div class="notice ' . (post_type_exists('cntt2025_img_gallery') ? 'notice-success' : 'notice-error') . '"><p>Post type registration result: ' . (post_type_exists('cntt2025_img_gallery') ? 'SUCCESS' : 'FAILED') . '</p></div>';
-        }
-        
-        echo '</div>';
     }
 
     public function activate() {
@@ -158,12 +54,6 @@ class CNTT2025_PostImageGallery {
     }
 
     public function register_post_type() {
-        // Ensure we don't conflict with existing post types
-        if (post_type_exists('cntt2025_img_gallery')) {
-            error_log('CNTT2025 Gallery: Post type cntt2025_img_gallery already exists!');
-            return;
-        }
-        
         $labels = array(
             'name'               => 'Post Image Galleries',
             'singular_name'      => 'Post Image Gallery',
@@ -191,32 +81,13 @@ class CNTT2025_PostImageGallery {
             'capability_type'    => 'post',
             'has_archive'        => true,
             'hierarchical'       => false,
-            'menu_position'      => 27, // Changed to avoid conflicts
+            'menu_position'      => 27,
             'menu_icon'          => 'dashicons-images-alt2',
             'supports'           => array('title', 'editor', 'thumbnail'),
             'can_export'         => true,
         );
 
-        $result = register_post_type('cntt2025_img_gallery', $args);
-        
-        // Debug: Check if post type registration succeeded
-        if (is_wp_error($result)) {
-            error_log('CNTT2025 Gallery: Post type registration failed - ' . $result->get_error_message());
-        } else {
-            error_log('CNTT2025 Gallery: Post type registered successfully at position 27');
-        }
-        
-        return $result;
-    }
-
-    public function check_post_type_registration() {
-        if (!post_type_exists('cntt2025_img_gallery')) {
-            error_log('CNTT2025 Post Image Gallery: Post type NOT registered after init!');
-            // Try to register again
-            $this->register_post_type();
-        } else {
-            error_log('CNTT2025 Post Image Gallery: Post type successfully registered!');
-        }
+        register_post_type('cntt2025_img_gallery', $args);
     }
     
     public function add_meta_boxes() {
@@ -537,45 +408,33 @@ class CNTT2025_PostImageGallery {
         return $new_columns;
     }
 
-    public function add_test_menu() {
-        add_menu_page(
-            'TEST Image Gallery',
-            'TEST Image Gallery',
-            'edit_posts',
-            'test-image-gallery',
-            array($this, 'test_page'),
-            'dashicons-images-alt2',
-            28
-        );
-    }
-    
-    public function test_page() {
-        echo '<div class="wrap">';
-        echo '<h1>TEST Image Gallery Plugin</h1>';
-        echo '<p>✅ Nếu bạn thấy menu này, nghĩa là admin_menu hook hoạt động bình thường.</p>';
-        echo '<p><strong>Post Type Status:</strong> ' . (post_type_exists('cntt2025_img_gallery') ? 'REGISTERED' : 'NOT REGISTERED') . '</p>';
-        echo '<p>Hãy kiểm tra xem menu "Image Galleries" có xuất hiện không.</p>';
-        echo '</div>';
-    }
-    
     public function custom_column_content($column, $post_id) {
         switch ($column) {
             case 'gallery_preview':
-                $images = get_post_meta($post_id, '_cntt2025_img_gallery_images', true);
-                if (!empty($images)) {
-                    $first_image = reset($images);
-                    $image_url = wp_get_attachment_image_url($first_image, array(50, 50));
-                    if ($image_url) {
-                        echo '<img src="' . esc_url($image_url) . '" style="width: 50px; height: 50px; object-fit: cover;" alt="Gallery Preview">';
+                $gallery_images = get_post_meta($post_id, '_cntt2025_img_gallery_images', true);
+                if (!empty($gallery_images)) {
+                    $first_images = array_slice($gallery_images, 0, 3);
+                    echo '<div style="display: flex; gap: 4px;">';
+                    foreach ($first_images as $image) {
+                        echo '<img src="' . esc_url($image['thumbnail']) . '" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;" alt="Preview">';
                     }
+                    if (count($gallery_images) > 3) {
+                        echo '<div style="width: 40px; height: 40px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666;">+' . (count($gallery_images) - 3) . '</div>';
+                    }
+                    echo '</div>';
+                } else {
+                    echo '<span style="color: #999; font-style: italic;">Không có ảnh</span>';
                 }
                 break;
+                
             case 'image_count':
-                $images = get_post_meta($post_id, '_cntt2025_img_gallery_images', true);
-                echo is_array($images) ? count($images) : 0;
+                $gallery_images = get_post_meta($post_id, '_cntt2025_img_gallery_images', true);
+                $count = is_array($gallery_images) ? count($gallery_images) : 0;
+                echo '<span class="count-badge">' . $count . ' ảnh</span>';
                 break;
+                
             case 'shortcode':
-                echo '<code>[cntt2025_image_gallery id="' . esc_attr($post_id) . '"]</code>';
+                echo '<code style="background: #f1f1f1; padding: 2px 4px; border-radius: 3px; font-size: 11px;">[cntt2025_image_gallery id="' . $post_id . '"]</code>';
                 break;
         }
     }
