@@ -1,0 +1,230 @@
+/* CNTT2025 Gallery Frontend Styles */
+.cntt2025-gallery-container {
+  margin: 20px 0;
+}
+
+.cntt2025-gallery-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.cntt2025-gallery-item img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cntt2025-gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+/* Gallery Modal Styles */
+#cntt2025-gallery-modal {
+  z-index: 9999;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#cntt2025-gallery-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#cntt2025-gallery-modal .relative {
+  animation: modalZoomIn 0.3s ease-out;
+}
+
+@keyframes modalZoomIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Modal image */
+#gallery-modal-image {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Navigation buttons */
+#gallery-prev,
+#gallery-next {
+  transition: all 0.2s ease;
+}
+
+#gallery-prev:hover,
+#gallery-next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+#gallery-prev {
+  transform: translateY(-50%);
+}
+
+#gallery-next {
+  transform: translateY(-50%);
+}
+
+/* Close button */
+#gallery-modal-close {
+  transition: all 0.2s ease;
+}
+
+#gallery-modal-close:hover {
+  transform: scale(1.1);
+}
+
+/* Caption styling */
+#gallery-modal-caption {
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 20px;
+}
+
+#gallery-modal-caption:empty {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #cntt2025-gallery-modal .max-w-4xl {
+    max-width: 95vw;
+  }
+
+  #cntt2025-gallery-modal img {
+    max-height: 70vh;
+  }
+
+  #gallery-prev,
+  #gallery-next {
+    padding: 8px;
+  }
+
+  #gallery-prev svg,
+  #gallery-next svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  #gallery-modal-close {
+    top: -40px;
+    right: 10px;
+  }
+
+  #gallery-modal-close svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Loading state */
+.cntt2025-gallery-item.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.cntt2025-gallery-item.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom Tailwind-like utilities for older browsers */
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.gap-0 {
+  gap: 0;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+.rounded-sm {
+  border-radius: 0.125rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Responsive grid classes */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .xl\:grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
