@@ -186,6 +186,7 @@ class CNTT2025_PostImageGallery {
         $columns = get_post_meta($post->ID, '_cntt2025_img_gallery_columns', true) ?: '3';
         $gap = get_post_meta($post->ID, '_cntt2025_img_gallery_gap', true) ?: '4';
         $border_radius = get_post_meta($post->ID, '_cntt2025_img_gallery_border_radius', true) ?: 'rounded-lg';
+        $preview_quality = get_post_meta($post->ID, '_cntt2025_img_gallery_preview_quality', true) ?: 'medium';
         $event_date = get_post_meta($post->ID, '_cntt2025_img_gallery_event_date', true);
         $event_location = get_post_meta($post->ID, '_cntt2025_img_gallery_event_location', true);
         ?>
@@ -241,6 +242,19 @@ class CNTT2025_PostImageGallery {
                     </select>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <label for="gallery_preview_quality"><strong>Chất lượng ảnh preview:</strong></label>
+                    <select name="gallery_preview_quality" id="gallery_preview_quality" style="width: 100%;">
+                        <option value="thumbnail" <?php selected($preview_quality, 'thumbnail'); ?>>Thấp (150x150px)</option>
+                        <option value="medium" <?php selected($preview_quality, 'medium'); ?>>Trung bình (300x300px)</option>
+                        <option value="medium_large" <?php selected($preview_quality, 'medium_large'); ?>>Cao (768x768px)</option>
+                        <option value="large" <?php selected($preview_quality, 'large'); ?>>Rất cao (1024x1024px)</option>
+                        <option value="full" <?php selected($preview_quality, 'full'); ?>>Tối đa (kích thước gốc)</option>
+                    </select>
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">💡 Chất lượng cao hơn sẽ tải chậm hơn nhưng hiển thị đẹp hơn.</p>
+                </td>
+            </tr>
         </table>
         
         <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border: 1px solid #0073aa; border-radius: 4px;">
@@ -254,7 +268,8 @@ class CNTT2025_PostImageGallery {
                 • <code>show_event_info="false"</code> - Ẩn thông tin sự kiện<br>
                 • <code>columns="4"</code> - Số cột hiển thị<br>
                 • <code>gap="2"</code> - Khoảng cách ảnh<br>
-                • <code>border_radius="rounded"</code> - Bo góc ảnh
+                • <code>border_radius="rounded"</code> - Bo góc ảnh<br>
+                • <code>preview_quality="medium"</code> - Chất lượng ảnh preview
             </p>
         </div>
         <?php
@@ -304,6 +319,10 @@ class CNTT2025_PostImageGallery {
             update_post_meta($post_id, '_cntt2025_img_gallery_border_radius', sanitize_text_field($_POST['gallery_border_radius']));
         }
 
+        if (isset($_POST['gallery_preview_quality'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_preview_quality', sanitize_text_field($_POST['gallery_preview_quality']));
+        }
+
         // Save event information
         if (isset($_POST['event_date'])) {
             update_post_meta($post_id, '_cntt2025_img_gallery_event_date', sanitize_text_field($_POST['event_date']));
@@ -335,6 +354,7 @@ class CNTT2025_PostImageGallery {
             'columns' => '',
             'gap' => '',
             'border_radius' => '',
+            'preview_quality' => '',
             'show_event_info' => 'false'
         ), $atts);
 
@@ -356,6 +376,7 @@ class CNTT2025_PostImageGallery {
         $columns = !empty($atts['columns']) ? $atts['columns'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_columns', true) ?: '3');
         $gap = !empty($atts['gap']) ? $atts['gap'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_gap', true) ?: '4');
         $border_radius = !empty($atts['border_radius']) ? $atts['border_radius'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_border_radius', true) ?: 'rounded-lg');
+        $preview_quality = !empty($atts['preview_quality']) ? $atts['preview_quality'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_preview_quality', true) ?: 'medium');
         
         // Get event information
         $event_date = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_date', true);
@@ -399,11 +420,21 @@ class CNTT2025_PostImageGallery {
             
             <div class="grid <?php echo esc_attr($column_class); ?> <?php echo esc_attr($gap_class); ?>">
                 <?php foreach ($gallery_images as $index => $image): ?>
+                    <?php 
+                    // Get preview image URL based on quality setting
+                    $preview_url = $image['thumbnail']; // default fallback
+                    if (!empty($image['id'])) {
+                        $preview_image = wp_get_attachment_image_src($image['id'], $preview_quality);
+                        if ($preview_image) {
+                            $preview_url = $preview_image[0];
+                        }
+                    }
+                    ?>
                     <div class="cntt2025-gallery-item <?php echo esc_attr($border_radius); ?> cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden" 
                          data-image-url="<?php echo esc_url($image['url']); ?>"
                          data-image-caption="<?php echo esc_attr($image['caption']); ?>"
                          data-image-index="<?php echo $index; ?>">
-                        <img src="<?php echo esc_url($image['thumbnail']); ?>" 
+                        <img src="<?php echo esc_url($preview_url); ?>" 
                              alt="<?php echo esc_attr($image['caption']); ?>"
                              class="w-full h-auto object-cover <?php echo esc_attr($border_radius); ?> shadow-md hover:shadow-lg transition-shadow duration-300"
                              loading="lazy">
