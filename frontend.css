@@ -3,6 +3,42 @@
   margin: 20px 0;
 }
 
+/* Event Info Styles */
+.cntt2025-event-info {
+  background-color: #f8fafc;
+  border-left: 4px solid #3b82f6;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.cntt2025-event-info h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.cntt2025-event-info .event-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.cntt2025-event-info .event-detail:last-child {
+  margin-bottom: 0;
+}
+
+.cntt2025-event-info .event-icon {
+  color: #3b82f6;
+  margin-right: 0.5rem;
+}
+
+.cntt2025-event-info .event-label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
 .cntt2025-gallery-item {
   position: relative;
   overflow: hidden;

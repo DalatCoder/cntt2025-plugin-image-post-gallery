@@ -186,8 +186,22 @@ class CNTT2025_PostImageGallery {
         $columns = get_post_meta($post->ID, '_cntt2025_img_gallery_columns', true) ?: '3';
         $gap = get_post_meta($post->ID, '_cntt2025_img_gallery_gap', true) ?: '4';
         $border_radius = get_post_meta($post->ID, '_cntt2025_img_gallery_border_radius', true) ?: 'rounded-lg';
+        $event_date = get_post_meta($post->ID, '_cntt2025_img_gallery_event_date', true);
+        $event_location = get_post_meta($post->ID, '_cntt2025_img_gallery_event_location', true);
         ?>
         <table class="form-table">
+            <tr>
+                <td>
+                    <label for="event_date"><strong>Ngày diễn ra sự kiện:</strong></label>
+                    <input type="date" name="event_date" id="event_date" value="<?php echo esc_attr($event_date); ?>" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="event_location"><strong>Địa điểm sự kiện:</strong></label>
+                    <input type="text" name="event_location" id="event_location" value="<?php echo esc_attr($event_location); ?>" placeholder="Nhập địa điểm diễn ra sự kiện..." style="width: 100%;">
+                </td>
+            </tr>
             <tr>
                 <td>
                     <label for="gallery_columns"><strong>Số cột hiển thị:</strong></label>
@@ -231,9 +245,16 @@ class CNTT2025_PostImageGallery {
         
         <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border: 1px solid #0073aa; border-radius: 4px;">
             <h4 style="margin: 0 0 10px 0; color: #0073aa;">📋 Shortcode:</h4>
-            <input type="text" value='[cntt2025_image_gallery id="<?php echo $post->ID; ?>"]' readonly style="width: 100%; background: #fff; font-family: monospace;" onclick="this.select();">
-            <p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">
+            <input type="text" value='[cntt2025_image_gallery id="<?php echo $post->ID; ?>"]' readonly style="width: 100%; background: #fff; font-family: monospace; margin-bottom: 10px;" onclick="this.select();">
+            <p style="margin: 10px 0 5px 0; font-size: 12px; color: #666;">
                 💡 Copy shortcode này và dán vào nội dung bài viết để hiển thị gallery.
+            </p>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #888;">
+                <strong>Tham số bổ sung:</strong><br>
+                • <code>show_event_info="false"</code> - Ẩn thông tin sự kiện<br>
+                • <code>columns="4"</code> - Số cột hiển thị<br>
+                • <code>gap="2"</code> - Khoảng cách ảnh<br>
+                • <code>border_radius="rounded"</code> - Bo góc ảnh
             </p>
         </div>
         <?php
@@ -282,6 +303,15 @@ class CNTT2025_PostImageGallery {
         if (isset($_POST['gallery_border_radius'])) {
             update_post_meta($post_id, '_cntt2025_img_gallery_border_radius', sanitize_text_field($_POST['gallery_border_radius']));
         }
+
+        // Save event information
+        if (isset($_POST['event_date'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_event_date', sanitize_text_field($_POST['event_date']));
+        }
+
+        if (isset($_POST['event_location'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_event_location', sanitize_text_field($_POST['event_location']));
+        }
     }
 
     public function enqueue_admin_scripts($hook) {
@@ -304,7 +334,8 @@ class CNTT2025_PostImageGallery {
             'id' => '',
             'columns' => '',
             'gap' => '',
-            'border_radius' => ''
+            'border_radius' => '',
+            'show_event_info' => 'false'
         ), $atts);
 
         if (empty($atts['id'])) {
@@ -325,6 +356,11 @@ class CNTT2025_PostImageGallery {
         $columns = !empty($atts['columns']) ? $atts['columns'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_columns', true) ?: '3');
         $gap = !empty($atts['gap']) ? $atts['gap'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_gap', true) ?: '4');
         $border_radius = !empty($atts['border_radius']) ? $atts['border_radius'] : (get_post_meta($atts['id'], '_cntt2025_img_gallery_border_radius', true) ?: 'rounded-lg');
+        
+        // Get event information
+        $event_date = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_date', true);
+        $event_location = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_location', true);
+        $show_event_info = $atts['show_event_info'] === 'true';
 
         $column_classes = array(
             '1' => 'grid-cols-1',
@@ -341,6 +377,26 @@ class CNTT2025_PostImageGallery {
         ob_start();
         ?>
         <div class="cntt2025-gallery-container" data-gallery-id="<?php echo esc_attr($atts['id']); ?>">
+            <?php if ($show_event_info && (!empty($event_date) || !empty($event_location))): ?>
+                <div class="cntt2025-event-info mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">📸 Thông tin sự kiện</h3>
+                    <?php if (!empty($event_date)): ?>
+                        <div class="flex items-center mb-2">
+                            <span class="text-blue-600 mr-2">📅</span>
+                            <span class="font-medium">Ngày:</span>
+                            <span class="ml-2"><?php echo esc_html(date_i18n('d/m/Y', strtotime($event_date))); ?></span>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($event_location)): ?>
+                        <div class="flex items-center">
+                            <span class="text-blue-600 mr-2">📍</span>
+                            <span class="font-medium">Địa điểm:</span>
+                            <span class="ml-2"><?php echo esc_html($event_location); ?></span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+            
             <div class="grid <?php echo esc_attr($column_class); ?> <?php echo esc_attr($gap_class); ?>">
                 <?php foreach ($gallery_images as $index => $image): ?>
                     <div class="cntt2025-gallery-item <?php echo esc_attr($border_radius); ?> cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden" 
@@ -401,6 +457,8 @@ class CNTT2025_PostImageGallery {
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
         $new_columns['gallery_preview'] = 'Preview Gallery';
+        $new_columns['event_date'] = 'Ngày sự kiện';
+        $new_columns['event_location'] = 'Địa điểm';
         $new_columns['image_count'] = 'Số ảnh';
         $new_columns['shortcode'] = 'Shortcode';
         $new_columns['date'] = $columns['date'];
@@ -424,6 +482,25 @@ class CNTT2025_PostImageGallery {
                     echo '</div>';
                 } else {
                     echo '<span style="color: #999; font-style: italic;">Không có ảnh</span>';
+                }
+                break;
+                
+            case 'event_date':
+                $event_date = get_post_meta($post_id, '_cntt2025_img_gallery_event_date', true);
+                if (!empty($event_date)) {
+                    $formatted_date = date_i18n('d/m/Y', strtotime($event_date));
+                    echo '<span style="font-weight: 500;">📅 ' . $formatted_date . '</span>';
+                } else {
+                    echo '<span style="color: #999; font-style: italic;">Chưa đặt</span>';
+                }
+                break;
+                
+            case 'event_location':
+                $event_location = get_post_meta($post_id, '_cntt2025_img_gallery_event_location', true);
+                if (!empty($event_location)) {
+                    echo '<span style="font-weight: 500;">📍 ' . esc_html($event_location) . '</span>';
+                } else {
+                    echo '<span style="color: #999; font-style: italic;">Chưa đặt</span>';
                 }
                 break;
                 
