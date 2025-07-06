@@ -204,8 +204,19 @@ class CNTT2025_PostImageGallery {
         $layout_style = get_post_meta($post->ID, '_cntt2025_img_gallery_layout_style', true) ?: 'masonry';
         $event_date = get_post_meta($post->ID, '_cntt2025_img_gallery_event_date', true);
         $event_location = get_post_meta($post->ID, '_cntt2025_img_gallery_event_location', true);
+        $is_priority = get_post_meta($post->ID, '_cntt2025_img_gallery_is_priority', true);
         ?>
         <table class="form-table">
+            <tr>
+                <td>
+                    <label for="is_priority"><strong>Gallery ưu tiên:</strong></label>
+                    <label style="display: inline-flex; align-items: center; margin-top: 5px;">
+                        <input type="checkbox" name="is_priority" id="is_priority" value="1" <?php checked($is_priority, '1'); ?> style="margin-right: 8px;">
+                        <span>Đánh dấu gallery này là ưu tiên (sẽ được hiển thị trước trong thư viện ảnh động)</span>
+                    </label>
+                    <p style="font-size: 11px; color: #666; margin-top: 8px;">⭐ Gallery ưu tiên sẽ luôn được lấy ảnh để hiển thị trong section "Thư viện ảnh động" trên trang chủ.</p>
+                </td>
+            </tr>
             <tr>
                 <td>
                     <label for="event_date"><strong>Ngày diễn ra sự kiện:</strong></label>
@@ -350,6 +361,13 @@ class CNTT2025_PostImageGallery {
 
         if (isset($_POST['event_location'])) {
             update_post_meta($post_id, '_cntt2025_img_gallery_event_location', sanitize_text_field($_POST['event_location']));
+        }
+
+        // Save priority status
+        if (isset($_POST['is_priority'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_is_priority', '1');
+        } else {
+            update_post_meta($post_id, '_cntt2025_img_gallery_is_priority', '0');
         }
     }
 
