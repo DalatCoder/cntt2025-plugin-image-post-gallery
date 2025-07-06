@@ -343,7 +343,7 @@ class CNTT2025_PostImageGallery {
         <div class="cntt2025-gallery-container" data-gallery-id="<?php echo esc_attr($atts['id']); ?>">
             <div class="grid <?php echo esc_attr($column_class); ?> <?php echo esc_attr($gap_class); ?>">
                 <?php foreach ($gallery_images as $index => $image): ?>
-                    <div class="cntt2025-gallery-item cursor-pointer transform transition-transform duration-300 hover:scale-105" 
+                    <div class="cntt2025-gallery-item <?php echo esc_attr($border_radius); ?> cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden" 
                          data-image-url="<?php echo esc_url($image['url']); ?>"
                          data-image-caption="<?php echo esc_attr($image['caption']); ?>"
                          data-image-index="<?php echo $index; ?>">

@@ -6,14 +6,51 @@
 .cntt2025-gallery-item {
   position: relative;
   overflow: hidden;
+  border-radius: inherit;
 }
 
 .cntt2025-gallery-item img {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: inherit;
 }
 
 .cntt2025-gallery-item:hover img {
   transform: scale(1.05);
+}
+
+/* Ensure border radius is maintained on all rounded classes */
+.cntt2025-gallery-item.rounded-sm,
+.cntt2025-gallery-item.rounded-sm img {
+  border-radius: 0.125rem !important;
+}
+
+.cntt2025-gallery-item.rounded,
+.cntt2025-gallery-item.rounded img {
+  border-radius: 0.25rem !important;
+}
+
+.cntt2025-gallery-item.rounded-lg,
+.cntt2025-gallery-item.rounded-lg img {
+  border-radius: 0.5rem !important;
+}
+
+.cntt2025-gallery-item.rounded-xl,
+.cntt2025-gallery-item.rounded-xl img {
+  border-radius: 0.75rem !important;
+}
+
+.cntt2025-gallery-item.rounded-full,
+.cntt2025-gallery-item.rounded-full img {
+  border-radius: 9999px !important;
+}
+
+/* Override hover effects to maintain border radius */
+.cntt2025-gallery-item:hover {
+  border-radius: inherit;
+}
+
+.cntt2025-gallery-item:hover img {
+  border-radius: inherit;
 }
 
 /* Gallery Modal Styles */
