@@ -204,6 +204,8 @@ class CNTT2025_PostImageGallery {
         $layout_style = get_post_meta($post->ID, '_cntt2025_img_gallery_layout_style', true) ?: 'masonry';
         $event_date = get_post_meta($post->ID, '_cntt2025_img_gallery_event_date', true);
         $event_location = get_post_meta($post->ID, '_cntt2025_img_gallery_event_location', true);
+        $related_link = get_post_meta($post->ID, '_cntt2025_img_gallery_related_link', true);
+        $related_link_text = get_post_meta($post->ID, '_cntt2025_img_gallery_related_link_text', true);
         $is_priority = get_post_meta($post->ID, '_cntt2025_img_gallery_is_priority', true);
         ?>
         <table class="form-table">
@@ -227,6 +229,14 @@ class CNTT2025_PostImageGallery {
                 <td>
                     <label for="event_location"><strong>Địa điểm sự kiện:</strong></label>
                     <input type="text" name="event_location" id="event_location" value="<?php echo esc_attr($event_location); ?>" placeholder="Nhập địa điểm diễn ra sự kiện..." style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="related_link"><strong>Link bài viết liên quan:</strong></label>
+                    <input type="text" name="related_link" id="related_link" value="<?php echo esc_attr($related_link); ?>" placeholder="https://example.com/bai-viet-lien-quan" style="width: 100%; margin-bottom: 8px;">
+                    <input type="text" name="related_link_text" id="related_link_text" value="<?php echo esc_attr($related_link_text); ?>" placeholder="Văn bản hiển thị cho link (ví dụ: Đọc thêm về sự kiện)" style="width: 100%;">
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">🔗 Link này sẽ hiển thị cùng với gallery để người dùng có thể xem bài viết chi tiết liên quan.</p>
                 </td>
             </tr>
             <tr>
@@ -291,7 +301,7 @@ class CNTT2025_PostImageGallery {
             </p>
             <p style="margin: 5px 0 0 0; font-size: 11px; color: #888;">
                 <strong>Tham số bổ sung:</strong><br>
-                • <code>show_event_info="false"</code> - Ẩn thông tin sự kiện<br>
+                • <code>show_event_info="false"</code> - Hiển thị thông tin sự kiện và link liên quan<br>
                 • <code>columns="4"</code> - Số cột hiển thị<br>
                 • <code>gap="2"</code> - Khoảng cách ảnh<br>
                 • <code>border_radius="rounded"</code> - Bo góc ảnh<br>
@@ -363,6 +373,15 @@ class CNTT2025_PostImageGallery {
             update_post_meta($post_id, '_cntt2025_img_gallery_event_location', sanitize_text_field($_POST['event_location']));
         }
 
+        // Save related link information
+        if (isset($_POST['related_link'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_related_link', esc_url_raw($_POST['related_link']));
+        }
+
+        if (isset($_POST['related_link_text'])) {
+            update_post_meta($post_id, '_cntt2025_img_gallery_related_link_text', sanitize_text_field($_POST['related_link_text']));
+        }
+
         // Save priority status
         if (isset($_POST['is_priority'])) {
             update_post_meta($post_id, '_cntt2025_img_gallery_is_priority', '1');
@@ -421,6 +440,8 @@ class CNTT2025_PostImageGallery {
         // Get event information
         $event_date = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_date', true);
         $event_location = get_post_meta($atts['id'], '_cntt2025_img_gallery_event_location', true);
+        $related_link = get_post_meta($atts['id'], '_cntt2025_img_gallery_related_link', true);
+        $related_link_text = get_post_meta($atts['id'], '_cntt2025_img_gallery_related_link_text', true);
         $show_event_info = $atts['show_event_info'] === 'true';
 
         // Determine layout classes based on style
@@ -461,7 +482,7 @@ class CNTT2025_PostImageGallery {
         ob_start();
         ?>
         <div class="cntt2025-gallery-container" data-gallery-id="<?php echo esc_attr($atts['id']); ?>">
-            <?php if ($show_event_info && (!empty($event_date) || !empty($event_location))): ?>
+            <?php if ($show_event_info && (!empty($event_date) || !empty($event_location) || !empty($related_link))): ?>
                 <div class="cntt2025-event-info mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
                     <h3 class="text-lg font-semibold text-gray-800 mb-2">📸 Thông tin sự kiện</h3>
                     <?php if (!empty($event_date)): ?>
@@ -472,10 +493,23 @@ class CNTT2025_PostImageGallery {
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($event_location)): ?>
-                        <div class="flex items-center">
+                        <div class="flex items-center mb-2">
                             <span class="text-blue-600 mr-2">📍</span>
                             <span class="font-medium">Địa điểm:</span>
                             <span class="ml-2"><?php echo esc_html($event_location); ?></span>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($related_link)): ?>
+                        <div class="flex items-center">
+                            <span class="text-blue-600 mr-2">🔗</span>
+                            <span class="font-medium">Chi tiết:</span>
+                            <a href="<?php echo esc_url($related_link); ?>" 
+                               class="ml-2 text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200" 
+                               target="_blank" 
+                               rel="noopener noreferrer">
+                                <?php echo esc_html($related_link_text ?: 'Xem bài viết liên quan'); ?>
+                                <span class="text-xs ml-1">↗</span>
+                            </a>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -563,6 +597,7 @@ class CNTT2025_PostImageGallery {
         $new_columns['gallery_preview'] = 'Preview Gallery';
         $new_columns['event_date'] = 'Ngày sự kiện';
         $new_columns['event_location'] = 'Địa điểm';
+        $new_columns['related_link'] = 'Link liên quan';
         $new_columns['image_count'] = 'Số ảnh';
         $new_columns['shortcode'] = 'Shortcode';
         $new_columns['date'] = $columns['date'];
@@ -605,6 +640,20 @@ class CNTT2025_PostImageGallery {
                     echo '<span style="font-weight: 500;">📍 ' . esc_html($event_location) . '</span>';
                 } else {
                     echo '<span style="color: #999; font-style: italic;">Chưa đặt</span>';
+                }
+                break;
+                
+            case 'related_link':
+                $related_link = get_post_meta($post_id, '_cntt2025_img_gallery_related_link', true);
+                $related_link_text = get_post_meta($post_id, '_cntt2025_img_gallery_related_link_text', true);
+                if (!empty($related_link)) {
+                    $display_text = !empty($related_link_text) ? $related_link_text : 'Xem chi tiết';
+                    echo '<a href="' . esc_url($related_link) . '" target="_blank" rel="noopener noreferrer" style="color: #0073aa; text-decoration: none; font-weight: 500;">';
+                    echo '<span style="margin-right: 4px;">🔗</span>' . esc_html($display_text);
+                    echo '<span style="font-size: 10px; margin-left: 2px;">↗</span>';
+                    echo '</a>';
+                } else {
+                    echo '<span style="color: #999; font-style: italic;">Chưa có</span>';
                 }
                 break;
                 
