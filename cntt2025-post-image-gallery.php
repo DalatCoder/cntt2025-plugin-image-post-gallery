@@ -17,7 +17,7 @@
             <tr>
                 <td>
                     <label for="event_date"><strong>Ngày diễn ra sự kiện:</strong></label> dung với Tailwind CSS styling.
- * Version: 2.0.1
+ * Version: 2.0.2
  * Author: NGUYỄN TRỌNG HIẾU
  * Author URI: https://nguyentronghieu.io.vn
  * Text Domain: cntt2025-post-image-gallery
