@@ -1,6 +1,9 @@
 jQuery(document).ready(function ($) {
   let imageIndex = $(".gallery-item").length;
 
+  // Initialize sortable functionality
+  initializeSortable();
+
   // Open WordPress Media Library
   $("#add-gallery-image").on("click", function (e) {
     e.preventDefault();
@@ -21,6 +24,7 @@ jQuery(document).ready(function ($) {
       });
 
       updateNoImagesMessage();
+      updateOrderNumbers();
     });
 
     mediaUploader.open();
@@ -38,7 +42,8 @@ jQuery(document).ready(function ($) {
       .replace(/{{index}}/g, imageIndex)
       .replace(/{{id}}/g, attachment.id)
       .replace(/{{url}}/g, attachment.url)
-      .replace(/{{thumbnail}}/g, thumbnail);
+      .replace(/{{thumbnail}}/g, thumbnail)
+      .replace(/{{orderNumber}}/g, imageIndex + 1);
 
     $("#gallery-images-container").append(newItem);
     imageIndex++;
@@ -55,6 +60,7 @@ jQuery(document).ready(function ($) {
           $(this).remove();
           updateNoImagesMessage();
           reindexGalleryItems();
+          updateOrderNumbers();
         });
     }
   });
@@ -68,6 +74,7 @@ jQuery(document).ready(function ($) {
         $(this).remove();
         imageIndex = 0;
         updateNoImagesMessage();
+        updateOrderNumbers();
       });
     }
   });
@@ -76,9 +83,21 @@ jQuery(document).ready(function ($) {
   function updateNoImagesMessage() {
     const hasImages = $(".gallery-item").length > 0;
     $("#no-images-message").toggle(!hasImages);
+
+    // Show/hide sort info
+    $(".sort-info").toggle(hasImages);
   }
 
-  // Reindex gallery items after removal
+  // Update order numbers
+  function updateOrderNumbers() {
+    $(".gallery-item").each(function (index) {
+      $(this)
+        .find(".order-number")
+        .text(index + 1);
+    });
+  }
+
+  // Reindex gallery items after removal or reordering
   function reindexGalleryItems() {
     $(".gallery-item").each(function (index) {
       $(this).attr("data-index", index);
@@ -93,19 +112,59 @@ jQuery(document).ready(function ($) {
     imageIndex = $(".gallery-item").length;
   }
 
-  // Make gallery items sortable
-  if (typeof $.fn.sortable !== "undefined") {
+  // Initialize sortable functionality
+  function initializeSortable() {
     $("#gallery-images-container").sortable({
       items: ".gallery-item",
+      handle: ".drag-handle",
       cursor: "move",
-      opacity: 0.7,
+      opacity: 0.8,
       placeholder: "gallery-item-placeholder",
-      stop: function () {
+      tolerance: "pointer",
+      helper: "clone",
+      revert: 150,
+      start: function (e, ui) {
+        ui.placeholder.height(ui.item.height());
+        ui.item.addClass("ui-sortable-helper");
+      },
+      stop: function (e, ui) {
+        ui.item.removeClass("ui-sortable-helper");
         reindexGalleryItems();
+        updateOrderNumbers();
+
+        // Show success feedback
+        showSortFeedback();
       },
     });
   }
 
-  // Initialize no images message state
+  // Show feedback when sorting is complete
+  function showSortFeedback() {
+    const $feedback = $(
+      '<div class="sort-feedback">✓ Đã cập nhật thứ tự</div>'
+    );
+    $feedback.css({
+      position: "fixed",
+      top: "50px",
+      right: "20px",
+      background: "#4CAF50",
+      color: "white",
+      padding: "10px 15px",
+      borderRadius: "5px",
+      zIndex: 10000,
+      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+    });
+
+    $("body").append($feedback);
+
+    setTimeout(function () {
+      $feedback.fadeOut(300, function () {
+        $feedback.remove();
+      });
+    }, 2000);
+  }
+
+  // Initialize state
   updateNoImagesMessage();
+  updateOrderNumbers();
 });

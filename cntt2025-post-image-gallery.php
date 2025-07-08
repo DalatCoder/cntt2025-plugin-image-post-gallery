@@ -2,22 +2,8 @@
 /**
  * Plugin Name: CNTT2025 Post Image Gallery
  * Plugin URI: https://dlu.edu.vn
- * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery và                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="gallery_layout_style"><strong>Kiểu hiển thị:</strong></label>
-                    <select name="gallery_layout_style" id="gallery_layout_style" style="width: 100%;">
-                        <option value="masonry" <?php selected($layout_style, 'masonry'); ?>>Pinterest-style (Masonry)</option>
-                        <option value="grid" <?php selected($layout_style, 'grid'); ?>>Grid đều nhau</option>
-                    </select>
-                    <p style="font-size: 11px; color: #666; margin-top: 5px;">💡 Masonry: Chiều cao linh hoạt theo tỉ lệ ảnh. Grid: Chiều cao đồng đều.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="event_date"><strong>Ngày diễn ra sự kiện:</strong></label> dung với Tailwind CSS styling.
- * Version: 2.0.2
+ * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery và sắp xếp thứ tự ảnh bằng kéo-thả (drag & drop). Tương thích với Tailwind CSS styling.
+ * Version: 2.1.0
  * Author: NGUYỄN TRỌNG HIẾU
  * Author URI: https://nguyentronghieu.io.vn
  * Text Domain: cntt2025-post-image-gallery
@@ -137,12 +123,24 @@ class CNTT2025_PostImageGallery {
                 <button type="button" class="button" id="clear-all-images">
                     <span class="dashicons dashicons-trash"></span> Xóa tất cả
                 </button>
+                <div class="sort-info">
+                    <span class="dashicons dashicons-move"></span>
+                    <span>Kéo thả để sắp xếp thứ tự</span>
+                </div>
             </div>
             
             <div id="gallery-images-container">
                 <?php if (!empty($gallery_images)): ?>
                     <?php foreach ($gallery_images as $index => $image): ?>
                         <div class="gallery-item" data-index="<?php echo $index; ?>">
+                            <div class="gallery-item-header">
+                                <div class="drag-handle">
+                                    <span class="dashicons dashicons-move"></span>
+                                </div>
+                                <div class="image-order">
+                                    <span class="order-number"><?php echo $index + 1; ?></span>
+                                </div>
+                            </div>
                             <div class="gallery-item-content">
                                 <div class="image-preview">
                                     <img src="<?php echo esc_url($image['thumbnail']); ?>" alt="Gallery Image" style="max-width: 150px; height: auto;">
@@ -173,6 +171,14 @@ class CNTT2025_PostImageGallery {
 
         <script type="text/template" id="gallery-item-template">
             <div class="gallery-item" data-index="{{index}}">
+                <div class="gallery-item-header">
+                    <div class="drag-handle">
+                        <span class="dashicons dashicons-move"></span>
+                    </div>
+                    <div class="image-order">
+                        <span class="order-number">{{orderNumber}}</span>
+                    </div>
+                </div>
                 <div class="gallery-item-content">
                     <div class="image-preview">
                         <img src="{{thumbnail}}" alt="Gallery Image" style="max-width: 150px; height: auto;">
@@ -309,6 +315,15 @@ class CNTT2025_PostImageGallery {
                 • <code>layout_style="masonry"</code> - Kiểu hiển thị (masonry/grid)
             </p>
         </div>
+        
+        <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;">
+            <h4 style="margin: 0 0 10px 0; color: #856404;">🎯 Sắp xếp thứ tự ảnh:</h4>
+            <p style="margin: 0; font-size: 12px; color: #856404;">
+                • Kéo thả ảnh bằng biểu tượng <span class="dashicons dashicons-move" style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;"></span> để thay đổi thứ tự<br>
+                • Thứ tự hiển thị trên trang web sẽ theo thứ tự bạn sắp xếp ở đây<br>
+                • Số thứ tự hiển thị ở góc phải mỗi ảnh sẽ tự động cập nhật
+            </p>
+        </div>
         <?php
     }
 
@@ -395,8 +410,9 @@ class CNTT2025_PostImageGallery {
         
         if (($hook == 'post.php' || $hook == 'post-new.php') && $post_type == 'cntt2025_img_gallery') {
             wp_enqueue_media();
-            wp_enqueue_script('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.js', array('jquery'), '1.0', true);
-            wp_enqueue_style('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.0');
+            wp_enqueue_script('jquery-ui-sortable');
+            wp_enqueue_script('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.js', array('jquery', 'jquery-ui-sortable'), '1.1', true);
+            wp_enqueue_style('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.1');
         }
     }
 

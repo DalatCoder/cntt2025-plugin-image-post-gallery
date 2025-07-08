@@ -10,11 +10,28 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.gallery-controls .sort-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.gallery-controls .sort-info .dashicons {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 #gallery-images-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
@@ -26,11 +43,67 @@
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  cursor: move;
+  position: relative;
 }
 
 .gallery-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
+}
+
+.gallery-item.ui-sortable-helper {
+  transform: rotate(5deg);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.gallery-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  color: #666;
+  cursor: move;
+  padding: 2px 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.drag-handle:hover {
+  background: #f0f0f0;
+  color: #0073aa;
+}
+
+.drag-handle .dashicons {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.image-order {
+  display: flex;
+  align-items: center;
+}
+
+.order-number {
+  background: #0073aa;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .gallery-item-content {
@@ -80,19 +153,48 @@
 
 /* Sortable placeholder */
 .gallery-item-placeholder {
-  background: #f0f0f0;
-  border: 2px dashed #ccc;
+  background: #f0f8ff;
+  border: 2px dashed #0073aa;
   border-radius: 8px;
   height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  animation: pulse 2s infinite;
 }
 
 .gallery-item-placeholder::before {
-  content: "Thả hình ảnh vào đây";
-  color: #999;
+  content: "📸 Thả hình ảnh vào đây";
+  color: #0073aa;
   font-style: italic;
+  font-weight: 500;
+  text-align: center;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* Drag states */
+.gallery-item.ui-sortable-helper {
+  opacity: 0.8;
+  transform: scale(1.05) rotate(2deg);
+  z-index: 1000;
+}
+
+.gallery-item.ui-sortable-placeholder {
+  background: #f0f8ff;
+  border: 2px dashed #0073aa;
+  opacity: 0.5;
 }
 
 /* No images message */
@@ -141,9 +243,76 @@
   .gallery-controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 15px;
+  }
+
+  .gallery-controls .sort-info {
+    justify-content: center;
+    order: -1;
   }
 
   .gallery-controls .button {
-    margin-bottom: 10px;
+    margin-bottom: 0;
   }
+
+  .gallery-item {
+    padding: 12px;
+  }
+
+  .gallery-item-header {
+    margin-bottom: 8px;
+  }
+
+  .drag-handle .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .order-number {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+}
+
+/* Sort feedback animation */
+.sort-feedback {
+  animation: slideInFade 0.3s ease-out;
+}
+
+@keyframes slideInFade {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Disable text selection during drag */
+.gallery-item.ui-sortable-helper,
+.gallery-item.ui-sortable-helper * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Improved visual feedback */
+.gallery-item:hover .drag-handle {
+  background: #f0f8ff;
+  color: #0073aa;
+}
+
+.gallery-item:hover .order-number {
+  background: #0073aa;
+  transform: scale(1.1);
+}
+
+.gallery-item.ui-sortable-helper .order-number {
+  background: #ff6b35;
+  animation: pulse 1s infinite;
 }

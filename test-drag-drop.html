@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test CNTT2025 Gallery Drag & Drop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+      .feature-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+      .feature-list li:before {
+        content: "✅ ";
+        color: #4caf50;
+        font-weight: bold;
+      }
+      .instructions {
+        background: #f0f8ff;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #0073aa;
+        margin: 20px 0;
+      }
+      .code-block {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: monospace;
+        overflow-x: auto;
+        margin: 10px 0;
+      }
+      .version-badge {
+        background: #0073aa;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>
+        🎯 CNTT2025 Post Image Gallery <span class="version-badge">v2.1.0</span>
+      </h1>
+
+      <h2>🚀 Tính năng Drag & Drop Sorting</h2>
+      <p>
+        Plugin đã được cập nhật với tính năng sắp xếp thứ tự ảnh bằng kéo-thả:
+      </p>
+
+      <ul class="feature-list">
+        <li>Kéo thả trực quan với biểu tượng move</li>
+        <li>Số thứ tự hiển thị cho mỗi ảnh</li>
+        <li>Feedback trực quan khi sắp xếp</li>
+        <li>Animation mượt mà</li>
+        <li>Responsive design</li>
+        <li>Touch-friendly cho mobile</li>
+        <li>Auto-reindexing khi sắp xếp</li>
+        <li>Lưu thứ tự tự động</li>
+      </ul>
+
+      <div class="instructions">
+        <h3>📋 Hướng dẫn sử dụng:</h3>
+        <ol>
+          <li>Truy cập WordPress Admin → Image Galleries</li>
+          <li>Tạo gallery mới hoặc chỉnh sửa gallery hiện có</li>
+          <li>Thêm ảnh bằng nút "Thêm hình ảnh"</li>
+          <li>Kéo thả biểu tượng ☰ để sắp xếp thứ tự</li>
+          <li>Theo dõi số thứ tự tự động cập nhật</li>
+          <li>Lưu gallery để áp dụng thay đổi</li>
+        </ol>
+      </div>
+
+      <h3>📋 Shortcode:</h3>
+      <div class="code-block">[cntt2025_image_gallery id="123"]</div>
+
+      <h3>🔧 Tham số tùy chỉnh:</h3>
+      <div class="code-block">
+        [cntt2025_image_gallery id="123" columns="4" gap="2"
+        border_radius="rounded-lg" preview_quality="medium"
+        layout_style="masonry" show_event_info="false"]
+      </div>
+
+      <h3>🛠️ Cải tiến kỹ thuật:</h3>
+      <ul class="feature-list">
+        <li>jQuery UI Sortable integration</li>
+        <li>Handle selector để kéo thả chính xác</li>
+        <li>Auto-reindexing sau khi sắp xếp</li>
+        <li>Validation và security</li>
+        <li>Progressive enhancement</li>
+        <li>Responsive CSS Grid</li>
+      </ul>
+
+      <div class="instructions">
+        <h3>💡 Lưu ý quan trọng:</h3>
+        <ul>
+          <li>Thứ tự ảnh được lưu tự động trong database</li>
+          <li>Frontend sẽ hiển thị theo thứ tự đã sắp xếp</li>
+          <li>Tương thích với mobile và desktop</li>
+          <li>Không cần cấu hình thêm</li>
+        </ul>
+      </div>
+
+      <footer style="text-align: center; margin-top: 30px; color: #666">
+        <p>
+          <strong>Developed by:</strong> NGUYỄN TRỌNG HIẾU<br />
+          <strong>Website:</strong> https://nguyentronghieu.io.vn<br />
+          <strong>Version:</strong> 2.1.0 | <strong>License:</strong> GPL v2 or
+          later
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
