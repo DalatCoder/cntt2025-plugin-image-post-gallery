@@ -1,5 +1,39 @@
 # CHANGELOG - CNTT2025 Post Image Gallery
 
+## [2.2.0] - 2025-07-08
+
+### 🚀 Added
+
+- **Auto-Sort by Filename**: Tính năng tự động sắp xếp theo tên tập tin A-Z và Z-A
+- **Sort Control Buttons**: Nút "A-Z" và "Z-A" để sắp xếp tự động
+- **Enhanced Gallery Controls**: Chia layout controls thành 3 phần (left, center, right)
+- **Intelligent Filename Sorting**: Sắp xếp thông minh với localeCompare và numeric option
+- **Visual Feedback**: Thông báo tùy chỉnh cho từng loại sắp xếp
+
+### 🔧 Changed
+
+- **Gallery Controls Layout**: Tái cấu trúc layout controls với flexbox
+- **Responsive Design**: Cải tiến responsive cho mobile với controls riêng biệt
+- **Show/Hide Logic**: Ẩn/hiện nút sắp xếp tự động khi có/không có ảnh
+- **Plugin Version**: Cập nhật lên v2.2.0
+- **Assets Version**: Cập nhật version CSS/JS lên 1.2
+
+### 🎨 Improved
+
+- **Mobile UX**: Tối ưu layout controls cho mobile
+- **Button Styling**: Style cho nút sắp xếp tự động nhỏ gọn
+- **User Guide**: Cập nhật hướng dẫn sử dụng cho cả sắp xếp thủ công và tự động
+- **Confirmation Dialog**: Xác nhận trước khi sắp xếp tự động
+
+### 🛠️ Technical
+
+- **Natural Sorting**: Sử dụng localeCompare với numeric option
+- **Vietnamese Locale**: Hỗ trợ sắp xếp tiếng Việt
+- **DOM Manipulation**: Tối ưu việc reorder DOM elements
+- **Event Handling**: Quản lý events cho nút sắp xếp
+
+---
+
 ## [2.1.0] - 2025-07-08
 
 ### 🚀 Added

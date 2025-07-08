@@ -14,6 +14,44 @@
   flex-wrap: wrap;
 }
 
+.controls-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls-center {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+}
+
+.auto-sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.auto-sort-controls .button {
+  font-size: 11px;
+  height: 28px;
+  line-height: 26px;
+  padding: 0 8px;
+}
+
+.auto-sort-controls .button .dashicons {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  line-height: 1;
+}
+
 .gallery-controls .sort-info {
   display: flex;
   align-items: center;
@@ -246,9 +284,28 @@
     gap: 15px;
   }
 
-  .gallery-controls .sort-info {
+  .controls-left,
+  .controls-center,
+  .controls-right {
     justify-content: center;
+    width: 100%;
+  }
+
+  .controls-center {
     order: -1;
+  }
+
+  .controls-left {
+    order: 1;
+  }
+
+  .controls-right {
+    order: 2;
+  }
+
+  .auto-sort-controls {
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .gallery-controls .button {

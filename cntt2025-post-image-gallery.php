@@ -2,8 +2,8 @@
 /**
  * Plugin Name: CNTT2025 Post Image Gallery
  * Plugin URI: https://dlu.edu.vn
- * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery và sắp xếp thứ tự ảnh bằng kéo-thả (drag & drop). Tương thích với Tailwind CSS styling.
- * Version: 2.1.0
+ * Description: Tạo và quản lý thư viện ảnh với popup viewer cho bài viết. Hỗ trợ shortcode để chèn gallery, sắp xếp thứ tự ảnh bằng kéo-thả (drag & drop), và tự động sắp xếp theo tên tập tin. Tương thích với Tailwind CSS styling.
+ * Version: 2.2.0
  * Author: NGUYỄN TRỌNG HIẾU
  * Author URI: https://nguyentronghieu.io.vn
  * Text Domain: cntt2025-post-image-gallery
@@ -117,15 +117,30 @@ class CNTT2025_PostImageGallery {
         ?>
         <div id="gallery-manager">
             <div class="gallery-controls" style="margin-bottom: 20px;">
-                <button type="button" class="button button-primary" id="add-gallery-image">
-                    <span class="dashicons dashicons-plus-alt"></span> Thêm hình ảnh
-                </button>
-                <button type="button" class="button" id="clear-all-images">
-                    <span class="dashicons dashicons-trash"></span> Xóa tất cả
-                </button>
-                <div class="sort-info">
-                    <span class="dashicons dashicons-move"></span>
-                    <span>Kéo thả để sắp xếp thứ tự</span>
+                <div class="controls-left">
+                    <button type="button" class="button button-primary" id="add-gallery-image">
+                        <span class="dashicons dashicons-plus-alt"></span> Thêm hình ảnh
+                    </button>
+                    <button type="button" class="button" id="clear-all-images">
+                        <span class="dashicons dashicons-trash"></span> Xóa tất cả
+                    </button>
+                </div>
+                <div class="controls-center">
+                    <div class="sort-info">
+                        <span class="dashicons dashicons-move"></span>
+                        <span>Kéo thả để sắp xếp thứ tự</span>
+                    </div>
+                </div>
+                <div class="controls-right">
+                    <div class="auto-sort-controls">
+                        <label style="font-size: 12px; color: #666; margin-right: 10px;">Sắp xếp tự động:</label>
+                        <button type="button" class="button button-small" id="sort-filename-asc" title="Sắp xếp theo tên tập tin A-Z">
+                            <span class="dashicons dashicons-sort"></span> A-Z
+                        </button>
+                        <button type="button" class="button button-small" id="sort-filename-desc" title="Sắp xếp theo tên tập tin Z-A">
+                            <span class="dashicons dashicons-sort"></span> Z-A
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -319,9 +334,14 @@ class CNTT2025_PostImageGallery {
         <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;">
             <h4 style="margin: 0 0 10px 0; color: #856404;">🎯 Sắp xếp thứ tự ảnh:</h4>
             <p style="margin: 0; font-size: 12px; color: #856404;">
+                <strong>Sắp xếp thủ công:</strong><br>
                 • Kéo thả ảnh bằng biểu tượng <span class="dashicons dashicons-move" style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;"></span> để thay đổi thứ tự<br>
                 • Thứ tự hiển thị trên trang web sẽ theo thứ tự bạn sắp xếp ở đây<br>
-                • Số thứ tự hiển thị ở góc phải mỗi ảnh sẽ tự động cập nhật
+                • Số thứ tự hiển thị ở góc phải mỗi ảnh sẽ tự động cập nhật<br><br>
+                <strong>Sắp xếp tự động:</strong><br>
+                • Sử dụng nút <strong>A-Z</strong> để sắp xếp theo tên tập tin từ A đến Z<br>
+                • Sử dụng nút <strong>Z-A</strong> để sắp xếp theo tên tập tin từ Z đến A<br>
+                • Sắp xếp tự động sẽ áp dụng cho tất cả ảnh trong gallery
             </p>
         </div>
         <?php
@@ -411,8 +431,8 @@ class CNTT2025_PostImageGallery {
         if (($hook == 'post.php' || $hook == 'post-new.php') && $post_type == 'cntt2025_img_gallery') {
             wp_enqueue_media();
             wp_enqueue_script('jquery-ui-sortable');
-            wp_enqueue_script('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.js', array('jquery', 'jquery-ui-sortable'), '1.1', true);
-            wp_enqueue_style('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.1');
+            wp_enqueue_script('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.js', array('jquery', 'jquery-ui-sortable'), '1.2', true);
+            wp_enqueue_style('cntt2025-gallery-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.2');
         }
     }
 

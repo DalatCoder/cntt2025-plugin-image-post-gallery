@@ -84,8 +84,9 @@ jQuery(document).ready(function ($) {
     const hasImages = $(".gallery-item").length > 0;
     $("#no-images-message").toggle(!hasImages);
 
-    // Show/hide sort info
+    // Show/hide sort info and auto-sort controls
     $(".sort-info").toggle(hasImages);
+    $(".auto-sort-controls").toggle(hasImages);
   }
 
   // Update order numbers
@@ -139,10 +140,8 @@ jQuery(document).ready(function ($) {
   }
 
   // Show feedback when sorting is complete
-  function showSortFeedback() {
-    const $feedback = $(
-      '<div class="sort-feedback">✓ Đã cập nhật thứ tự</div>'
-    );
+  function showSortFeedback(message = "✓ Đã cập nhật thứ tự") {
+    const $feedback = $(`<div class="sort-feedback">${message}</div>`);
     $feedback.css({
       position: "fixed",
       top: "50px",
@@ -162,6 +161,61 @@ jQuery(document).ready(function ($) {
         $feedback.remove();
       });
     }, 2000);
+  }
+
+  // Auto-sort functionality
+  $("#sort-filename-asc").on("click", function (e) {
+    e.preventDefault();
+    if (confirm("Bạn có chắc muốn sắp xếp tất cả ảnh theo tên tập tin A-Z?")) {
+      sortImagesByFilename("asc");
+    }
+  });
+
+  $("#sort-filename-desc").on("click", function (e) {
+    e.preventDefault();
+    if (confirm("Bạn có chắc muốn sắp xếp tất cả ảnh theo tên tập tin Z-A?")) {
+      sortImagesByFilename("desc");
+    }
+  });
+
+  // Sort images by filename
+  function sortImagesByFilename(direction) {
+    const $container = $("#gallery-images-container");
+    const $items = $container.find(".gallery-item").get();
+
+    if ($items.length === 0) {
+      alert("Không có ảnh nào để sắp xếp!");
+      return;
+    }
+
+    // Get filename from URL and sort
+    $items.sort(function (a, b) {
+      const urlA = $(a).find('input[name*="[url]"]').val() || "";
+      const urlB = $(b).find('input[name*="[url]"]').val() || "";
+
+      // Extract filename from URL
+      const filenameA = urlA.split("/").pop().toLowerCase();
+      const filenameB = urlB.split("/").pop().toLowerCase();
+
+      if (direction === "asc") {
+        return filenameA.localeCompare(filenameB, "vi", { numeric: true });
+      } else {
+        return filenameB.localeCompare(filenameA, "vi", { numeric: true });
+      }
+    });
+
+    // Reorder DOM elements
+    $.each($items, function (index, item) {
+      $container.append(item);
+    });
+
+    // Update indices and order numbers
+    reindexGalleryItems();
+    updateOrderNumbers();
+
+    // Show feedback
+    const sortText = direction === "asc" ? "A-Z" : "Z-A";
+    showSortFeedback(`✓ Đã sắp xếp theo tên tập tin ${sortText}`);
   }
 
   // Initialize state

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Auto-Sort Feature - CNTT2025 Gallery</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .feature-highlight {
+        background: #e8f5e8;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #4caf50;
+        margin: 20px 0;
+      }
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+      .feature-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
+      .feature-list li:before {
+        content: "✅ ";
+        color: #4caf50;
+        font-weight: bold;
+      }
+      .button-demo {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 11px;
+        margin: 0 5px;
+        font-family: monospace;
+      }
+      .version-badge {
+        background: #2196f3;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .new-badge {
+        background: #ff5722;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+      .demo-controls {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 1px solid #e9ecef;
+      }
+      .control-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .controls-left,
+      .controls-center,
+      .controls-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .controls-center {
+        flex: 1;
+        justify-content: center;
+        font-style: italic;
+        color: #666;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>
+        🎯 CNTT2025 Post Image Gallery
+        <span class="version-badge">v2.2.0</span>
+        <span class="new-badge">NEW</span>
+      </h1>
+
+      <div class="feature-highlight">
+        <h2>🚀 Tính năng mới: Auto-Sort by Filename</h2>
+        <p>
+          <strong>Sắp xếp tự động theo tên tập tin!</strong> Bây giờ bạn có thể
+          sắp xếp tất cả ảnh trong gallery chỉ với một cú click.
+        </p>
+      </div>
+
+      <h3>🔧 Demo Gallery Controls Layout:</h3>
+      <div class="demo-controls">
+        <div class="control-section">
+          <div class="controls-left">
+            <span class="button-demo">➕ Thêm hình ảnh</span>
+            <span class="button-demo">🗑️ Xóa tất cả</span>
+          </div>
+          <div class="controls-center">☰ Kéo thả để sắp xếp thứ tự</div>
+          <div class="controls-right">
+            <small style="margin-right: 10px">Sắp xếp tự động:</small>
+            <span class="button-demo" style="background: #e8f5e8">📊 A-Z</span>
+            <span class="button-demo" style="background: #e8f5e8">📊 Z-A</span>
+          </div>
+        </div>
+      </div>
+
+      <h3>✨ Tính năng Auto-Sort:</h3>
+      <ul class="feature-list">
+        <li>Sắp xếp tự động theo tên tập tin A-Z</li>
+        <li>Sắp xếp tự động theo tên tập tin Z-A</li>
+        <li>Sắp xếp thông minh với localeCompare (hỗ trợ tiếng Việt)</li>
+        <li>Numeric sorting (ví dụ: image1, image2, image10)</li>
+        <li>Confirmation dialog trước khi sắp xếp</li>
+        <li>Visual feedback với thông báo tùy chỉnh</li>
+        <li>Tự động ẩn/hiện khi có/không có ảnh</li>
+        <li>Responsive design cho mobile</li>
+      </ul>
+
+      <h3>🎯 Cách sử dụng:</h3>
+      <ol>
+        <li>Tạo gallery và thêm ít nhất 2 ảnh</li>
+        <li>Nhấn nút <strong>A-Z</strong> để sắp xếp từ A đến Z</li>
+        <li>Nhấn nút <strong>Z-A</strong> để sắp xếp từ Z đến A</li>
+        <li>Xác nhận trong dialog popup</li>
+        <li>Thứ tự sẽ được cập nhật tự động</li>
+        <li>Lưu gallery để áp dụng thay đổi</li>
+      </ol>
+
+      <h3>🛠️ Cải tiến kỹ thuật:</h3>
+      <ul class="feature-list">
+        <li>Natural sorting với String.localeCompare()</li>
+        <li>Hỗ trợ Vietnamese locale</li>
+        <li>Numeric comparison option</li>
+        <li>Efficient DOM manipulation</li>
+        <li>Progressive enhancement</li>
+        <li>Event delegation</li>
+      </ul>
+
+      <h3>📱 Mobile Responsive:</h3>
+      <ul class="feature-list">
+        <li>Controls layout tự động điều chỉnh</li>
+        <li>Sắp xếp theo column trên mobile</li>
+        <li>Touch-friendly button sizing</li>
+        <li>Optimized spacing và gaps</li>
+      </ul>
+
+      <div class="feature-highlight">
+        <h4>🎨 Example Filename Sorting:</h4>
+        <p>
+          <strong>Before:</strong> zebra.jpg, apple.jpg, banana.jpg, 10-cat.jpg,
+          2-dog.jpg
+        </p>
+        <p>
+          <strong>After A-Z:</strong> 2-dog.jpg, 10-cat.jpg, apple.jpg,
+          banana.jpg, zebra.jpg
+        </p>
+        <p>
+          <strong>After Z-A:</strong> zebra.jpg, banana.jpg, apple.jpg,
+          10-cat.jpg, 2-dog.jpg
+        </p>
+      </div>
+
+      <footer
+        style="
+          text-align: center;
+          margin-top: 30px;
+          color: #666;
+          border-top: 1px solid #eee;
+          padding-top: 20px;
+        "
+      >
+        <p>
+          <strong>Developed by:</strong> NGUYỄN TRỌNG HIẾU<br />
+          <strong>Website:</strong> https://nguyentronghieu.io.vn<br />
+          <strong>Version:</strong> 2.2.0 | <strong>License:</strong> GPL v2 or
+          later
+        </p>
+        <p style="font-size: 12px; color: #999">
+          ⚡ New in v2.2.0: Auto-Sort by Filename Feature<br />
+          📅 Released: July 8, 2025
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
